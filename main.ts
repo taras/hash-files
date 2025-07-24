@@ -1,6 +1,17 @@
 import { parseArgs } from "jsr:@std/cli@1/parse-args";
 import { hashFiles, hashFilesSync } from "./lib/hash.ts";
 
+/**
+ * Interface representing parsed command line arguments
+ * @interface ParsedArgs
+ * @property {string[]} [files] - Array of file patterns to hash
+ * @property {string} [algorithm] - Hash algorithm to use
+ * @property {boolean} [noGlob] - Whether to disable glob pattern matching
+ * @property {number} [batchCount] - Maximum files to process at once
+ * @property {boolean} [sync] - Whether to use synchronous processing
+ * @property {boolean} [help] - Whether to show help message
+ * @property {string[]} _ - Positional arguments
+ */
 interface ParsedArgs {
   files?: string[];
   algorithm?: string;
@@ -11,6 +22,10 @@ interface ParsedArgs {
   _: string[];
 }
 
+/**
+ * Display help information for the CLI tool
+ * @returns {void}
+ */
 function showHelp() {
   console.log(`
 Hash Files - Generate hash of multiple files
@@ -33,6 +48,11 @@ Examples:
   `);
 }
 
+/**
+ * Main CLI function that parses arguments and executes file hashing
+ * @returns {Promise<void>} A promise that resolves when the operation completes
+ * @throws {Error} When hashing fails or invalid arguments are provided
+ */
 async function main() {
   const args = parseArgs(Deno.args, {
     string: ["files", "algorithm", "batchCount"],

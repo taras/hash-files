@@ -3,6 +3,14 @@ import { expandGlob } from "jsr:@std/fs@1/expand-glob";
 const validAlgorithms = ["sha-1", "sha-256", "sha-384", "sha-512"] as const;
 type Algorithm = typeof validAlgorithms[number];
 
+/**
+ * Options for configuring file hashing behavior
+ * @interface HashOptions
+ * @property {string[]} [files] - Array of file patterns to hash (default: ["./**"])
+ * @property {string} [algorithm] - Hash algorithm to use (default: "sha-1")
+ * @property {number} [batchCount] - Maximum number of files to process at once (default: 100)
+ * @property {boolean} [noGlob] - Treat file paths as exact paths without glob expansion (default: false)
+ */
 interface HashOptions {
   files?: string[];
   algorithm?: string;
@@ -10,10 +18,26 @@ interface HashOptions {
   noGlob?: boolean;
 }
 
+/**
+ * Type guard to validate if a string is a supported hash algorithm
+ * @param {string} algorithm - The algorithm string to validate
+ * @returns {boolean} True if the algorithm is valid, false otherwise
+ */
 function isValidAlgorithm(algorithm: string): algorithm is Algorithm {
   return (validAlgorithms as readonly string[]).includes(algorithm);
 }
 
+/**
+ * Asynchronously compute the hash of multiple files
+ * @param {HashOptions} [options={}] - Configuration options for hashing
+ * @returns {Promise<string>} A promise that resolves to the computed hash as a hexadecimal string
+ * @throws {Error} When algorithm is invalid or file reading fails
+ * @example
+ * ```typescript
+ * const hash = await hashFiles({ files: ["src/**/*.ts"], algorithm: "sha-256" });
+ * console.log(hash);
+ * ```
+ */
 export async function hashFiles(options: HashOptions = {}): Promise<string> {
   const {
     files = ["./**"],
@@ -92,6 +116,18 @@ export async function hashFiles(options: HashOptions = {}): Promise<string> {
   return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
+/**
+ * Synchronously compute the hash of multiple files (simplified implementation)
+ * @param {HashOptions} [options={}] - Configuration options for hashing
+ * @returns {string} The computed hash as a hexadecimal string
+ * @throws {Error} When algorithm is invalid or file reading fails
+ * @example
+ * ```typescript
+ * const hash = hashFilesSync({ files: ["file1.txt", "file2.txt"], noGlob: true });
+ * console.log(hash);
+ * ```
+ * @note This function uses a simplified hash implementation and has limited glob support
+ */
 export function hashFilesSync(options: HashOptions = {}): string {
   const {
     files = ["./**"],
