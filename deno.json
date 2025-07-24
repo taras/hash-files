@@ -1,0 +1,23 @@
+{
+  "name": "@taras/hash-files",
+  "version": "2.0.0",
+  "description": "A simple Deno TypeScript library and CLI for computing the hash of the contents of a set of files",
+  "license": "MIT",
+  "exports": {
+    ".": "./lib/hash.ts",
+    "./cli": "./main.ts"
+  },
+  "tasks": {
+    "dev": "deno run --allow-read --watch main.ts",
+    "start": "deno run --allow-read main.ts",
+    "test": "deno test --allow-read --allow-write"
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@1",
+    "@std/cli": "jsr:@std/cli@1",
+    "@std/fs": "jsr:@std/fs@1"
+  },
+  "permissions": {
+    "read": true
+  }
+}

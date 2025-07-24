@@ -1,74 +1,93 @@
 # hash-files
 
-A simple function for computing the hash of the contents of a set of files.
+Compute the hash of the contents of a set of files
 
-
-[![Build Status](https://secure.travis-ci.org/mac-/hash-files.png)](http://travis-ci.org/mac-/hash-files)
-[![Coverage Status](https://coveralls.io/repos/mac-/hash-files/badge.png)](https://coveralls.io/r/mac-/hash-files)
-[![NPM version](https://badge.fury.io/js/hash-files.png)](http://badge.fury.io/js/hash-files)
-[![Dependency Status](https://david-dm.org/mac-/hash-files.png)](https://david-dm.org/mac-/hash-files)
-
-[![NPM](https://nodei.co/npm/hash-files.png?downloads=true&stars=true)](https://nodei.co/npm/hash-files/)
+**Note: This project has been converted from Node.js to Deno.**
 
 ## Installation
 
-	npm install hash-files
+No installation required! Run directly with Deno:
+
+```bash
+deno run --allow-read jsr:@taras/hash-files/cli [options] [files...]
+```
 
 ## Usage
 
-```js
-var hashFiles = require('hash-files');
+### As a Library
 
-// options is optional
-hashFiles(options, function(error, hash) {
-	// hash will be a string if no error occurred
+```typescript
+import { hashFiles, hashFilesSync } from "jsr:@taras/hash-files";
+
+// Async version
+const hash = await hashFiles({
+  files: ['file1.txt', 'file2.txt'],
+  algorithm: 'sha-256',
+  noGlob: true
 });
+
+console.log(hash);
+
+// Sync version  
+const hashSync = hashFilesSync({
+  files: ['file1.txt'],
+  algorithm: 'sha-1'
+});
+
+console.log(hashSync);
 ```
 
-Or on the command line:
+### As a CLI Tool
 
-```shell
-$ ./bin/hash-files -h
+```bash
+# Run directly from JSR
+deno run jsr:@taras/hash-files/cli --help
 
-  Usage: hash-files [options]
+# Hash files with specific algorithm
+deno run jsr:@taras/hash-files/cli -a sha-256 main.ts
 
-  Options:
+# Hash multiple files without globbing
+deno run jsr:@taras/hash-files/cli --noGlob file1.txt file2.txt
 
-    -h, --help                  output usage information
-    -V, --version               output the version number
-    -f, --files [array]         (Optional) A collection of file paths to hash the contents of. Defaults to: ./**
-    -a, --algorithm [string]    (Optional) The algorithm to use to hash the content. Defaults to: "sha1"
-    -n, --no-glob               (Optional) Use this if you know all of the files in the collection are exact paths. Setting this to true speeds up the call slightly. Defaults to: false
-    -c, --batch-count [number]  (Optional) The maximum number of files to read into memory at any given time. Defaults to: 100
+# Use sync version
+deno run jsr:@taras/hash-files/cli --sync deno.json
 ```
 
-```shell
-$ ./bin/hash-files -f '["package.json"]' -a sha256
-a29089cc5e3f8bf6ae15ea6b9cd5eaefb14bbb12e3baa2c56ee5c21422250c75
+### CLI Options
+
+```
+Usage: deno run jsr:@taras/hash-files/cli [options] [files...]
+
+Options:
+  -f, --files <files...>     Files to hash (default: ./**)
+  -a, --algorithm <algo>     Hash algorithm (default: sha-1)
+                            Available: sha-1, sha-256, sha-384, sha-512
+  -n, --noGlob              Treat file paths as exact paths (no globbing)
+  -c, --batchCount <count>   Max files to read at once (default: 100)
+  -s, --sync                Use synchronous version
+  -h, --help                Show this help
 ```
 
-### hashFiles([options], callback)
+### hashFiles(options?)
 
-Performs a hash of the contents of the given files ansynchronously.
+Performs a hash of the contents of the given files asynchronously.
 
 * `options` - (Object) see below for more details
-* `callback` - (Function) called when an error occurs or the hash is completed. Should expect the following arguments:
-	* `error` - (Error or null) the error the occurred while hashing the contents of the given files or null if there was no error
-	* `hash` - (String) the value of the computed hash
+* Returns `Promise<string>` - the computed hash value
 
-### hashFiles.sync([options])
+### hashFilesSync(options?)
 
 Performs a hash of the contents of the given files synchronously.
 
-* `options` - (Object) see below for more details
-* returns `hash` - (String) the value of the computed hash
+* `options` - (Object) see below for more details  
+* Returns `string` - the computed hash value
 
 ### Options
 
 * `files` - (optional) A collection of file paths to hash the contents of. Defaults to `['./**']` (all the files in the current working directory)
-* `algorithm` - (optional) The algorithm to use to hash the content: 'md5', 'sha', 'sha1', 'sha224', 'sha256', 'sha384', or 'sha512'. Defaults to 'sha1'.
+* `algorithm` - (optional) The algorithm to use to hash the content: 'sha-1', 'sha-256', 'sha-384', or 'sha-512'. Defaults to 'sha-1'.
 * `noGlob` - (optional) Don't bother running a glob function on the files. Use this if you know all of the files in the collection are exact paths. Setting this to `true` speeds up the call slightly.
-* `batchCount` - (optional) Only used for the ansyc function. The maximum number of files to read into memory at any given time. Defaults to 100.
+* `batchCount` - (optional) Only used for the async function. The maximum number of files to read into memory at any given time. Defaults to 100.
 
 
 ## License
