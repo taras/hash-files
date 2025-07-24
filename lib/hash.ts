@@ -33,10 +33,7 @@ function isValidAlgorithm(algorithm: string): algorithm is Algorithm {
  * @returns {Promise<string>} A promise that resolves to the computed hash as a hexadecimal string
  * @throws {Error} When algorithm is invalid or file reading fails
  * @example
- * ```typescript
- * const hash = await hashFiles({ files: ["src/**/*.ts"], algorithm: "sha-256" });
- * console.log(hash);
- * ```
+ * const hash = await hashFiles({ files: ["src/file.ts"], algorithm: "sha-256" });
  */
 export async function hashFiles(options: HashOptions = {}): Promise<string> {
   const {
@@ -122,10 +119,7 @@ export async function hashFiles(options: HashOptions = {}): Promise<string> {
  * @returns {string} The computed hash as a hexadecimal string
  * @throws {Error} When algorithm is invalid or file reading fails
  * @example
- * ```typescript
  * const hash = hashFilesSync({ files: ["file1.txt", "file2.txt"], noGlob: true });
- * console.log(hash);
- * ```
  * @note This function uses a simplified hash implementation and has limited glob support
  */
 export function hashFilesSync(options: HashOptions = {}): string {
