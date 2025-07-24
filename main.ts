@@ -39,18 +39,18 @@ async function main() {
     boolean: ["noGlob", "sync", "help"],
     alias: {
       f: "files",
-      a: "algorithm", 
+      a: "algorithm",
       n: "noGlob",
       c: "batchCount",
       s: "sync",
-      h: "help"
+      h: "help",
     },
     default: {
       algorithm: "sha-1",
       batchCount: 100,
       noGlob: false,
-      sync: false
-    }
+      sync: false,
+    },
   }) as ParsedArgs;
 
   if (args.help) {
@@ -58,27 +58,33 @@ async function main() {
     return;
   }
 
-  const files = args.files ? [args.files].flat() : args._.length > 0 ? args._.map(String) : ['./**'];
-  
+  const files = args.files
+    ? [args.files].flat()
+    : args._.length > 0
+    ? args._.map(String)
+    : ["./**"];
+
   const hashOptions = {
     files,
     algorithm: args.algorithm,
     noGlob: args.noGlob,
-    batchCount: args.batchCount
+    batchCount: args.batchCount,
   };
 
   try {
     let result: string;
-    
+
     if (args.sync) {
       result = hashFilesSync(hashOptions);
     } else {
       result = await hashFiles(hashOptions);
     }
-    
+
     console.log(result);
   } catch (error) {
-    console.error(`Error: ${error instanceof Error ? error.message : String(error)}`);
+    console.error(
+      `Error: ${error instanceof Error ? error.message : String(error)}`,
+    );
     Deno.exit(1);
   }
 }
